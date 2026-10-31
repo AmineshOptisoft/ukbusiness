@@ -73,11 +73,11 @@ export default function GrowthHero({
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <section className="relative isolate min-h-screen overflow-hidden bg-ember-300 font-sans text-white">
+    <section className="relative isolate h-screen h-dvh overflow-hidden bg-ember-300 font-sans text-white flex flex-col justify-between">
       <VideoBackdrop src={videoSrc} poster={videoPoster} />
 
       {/* Navigation */}
-      <header className="relative z-10 mx-auto flex max-w-[1440px] items-center justify-between px-6 pt-6 md:px-8">
+      <header className="relative z-10 mx-auto flex w-full max-w-[1440px] items-center justify-between px-6 pt-6 md:px-8">
         <Logo name={brandName} tagline={brandTagline} />
 
         <nav className="hidden items-center gap-8 text-[15px] lg:flex" aria-label="Primary">
@@ -136,26 +136,26 @@ export default function GrowthHero({
       )}
 
       {/* Copy */}
-      <div className="relative z-10 mx-auto max-w-[1440px] px-6 pt-16 pb-20 md:px-8 md:pt-20">
-        <h1 className="max-w-[12ch] font-display text-[clamp(3rem,7.4vw,7rem)] leading-[1.05] font-normal tracking-[-0.02em]">
+      <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col items-start justify-center px-6 py-6 md:px-8">
+        <h1 className="max-w-[14ch] font-display text-[clamp(2.5rem,5.5vw,5.5rem)] leading-[1.05] font-normal tracking-[-0.02em]">
           {headline}
         </h1>
 
-        <div className="mt-8 ml-1 flex flex-col items-center text-white" aria-hidden="true">
+        <div className="mt-4 md:mt-6 ml-1 flex flex-col items-center text-white" aria-hidden="true">
           <span className="animate-arrow block self-start">
-            <svg viewBox="0 0 12 84" className="h-20 w-3" fill="none" stroke="currentColor" strokeWidth="1.2">
+            <svg viewBox="0 0 12 84" className="h-14 md:h-16 w-3" fill="none" stroke="currentColor" strokeWidth="1.2">
               <path d="M6 0v82M1 77l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </span>
         </div>
 
-        <p className="mt-10 max-w-[30ch] font-display text-[clamp(1.375rem,2.5vw,2.25rem)] leading-[1.3] font-normal">
+        <p className="mt-4 md:mt-6 max-w-[32ch] font-display text-[clamp(1.125rem,2vw,1.875rem)] leading-[1.3] font-normal">
           {subheadline}
         </p>
 
         <a
           href={ctaHref}
-          className="group mt-10 inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 text-[17px] text-ember-500 shadow-sm transition hover:shadow-lg"
+          className="group mt-6 md:mt-8 inline-flex w-fit self-start items-center gap-3 rounded-full bg-white px-8 py-3.5 text-[16px] font-semibold text-ember-500 shadow-sm transition hover:shadow-lg"
         >
           {ctaLabel}
           <ArrowRight className="h-3 w-8 transition-transform group-hover:translate-x-1" />
