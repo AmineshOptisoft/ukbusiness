@@ -5,8 +5,10 @@
  * under .svc3d so class names like .poster/.title cannot clash.
  */
 .svc3d {
-  --svc-bg: var(--color-ember-50);
-  --svc-fg: var(--color-ember-500);
+  /* text is only ever black or white; orange is for surfaces/accents */
+  --svc-bg: #0a0a0a;
+  --svc-fg: #fffffe;
+  --svc-ink: #0a0a0a;
   --svc-accent: var(--color-ember-500);
   --svc-mid: var(--color-ember-400);
   --svc-soft: var(--color-ember-300);
@@ -24,7 +26,7 @@
   color: var(--svc-fg);
   font-family: var(--svc-body);
 }
-.svc3d .svc3d-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; flex-direction: column; }
+.svc3d .svc3d-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; flex-direction: column; isolation: isolate; }
 .svc3d .svc3d-wrap { width: 100%; max-width: 1440px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
 @media (min-width: 768px) { .svc3d .svc3d-wrap { padding-left: 32px; padding-right: 32px; } }
 
@@ -33,25 +35,25 @@
 @media (max-width: 860px) { .svc3d .svc3d-head h2 { font-size: clamp(40px, 12vw, 72px); } }
 
 /* Same pill button as the hero CTA, inverted for the white background */
-.svc3d .svc3d-cta { display: inline-flex; align-items: center; gap: 12px; border-radius: 9999px; background: var(--svc-accent); color: var(--svc-white); padding: 14px 28px; font-size: 16px; font-weight: 600; text-decoration: none; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); transition: box-shadow 0.2s, transform 0.2s; }
-.svc3d .svc3d-cta:hover { box-shadow: 0 10px 24px rgba(250, 70, 20, 0.3); }
+.svc3d .svc3d-cta { display: inline-flex; align-items: center; gap: 12px; border-radius: 9999px; background: var(--svc-accent); color: var(--svc-white); padding: 14px 28px; font-size: 16px; font-weight: 600; text-decoration: none; box-shadow: 0 0 0 rgba(250, 70, 20, 0); transition: box-shadow 0.2s, transform 0.2s; }
+.svc3d .svc3d-cta:hover { box-shadow: 0 10px 30px rgba(250, 70, 20, 0.45); }
 .svc3d .svc3d-cta svg { width: 32px; height: 12px; transition: transform 0.2s; }
 .svc3d .svc3d-cta:hover svg { transform: translateX(4px); }
 
 .svc3d .svc3d-stage { position: relative; z-index: 1; flex: 1; min-height: 0; margin-top: clamp(12px, 2vh, 20px); transform-style: preserve-3d; perspective-origin: 50% 46%; }
 .svc3d .svc3d-foot { position: relative; z-index: 2; display: flex; align-items: baseline; gap: 16px; padding-block: 0 28px; transition: opacity 0.2s; }
-.svc3d .svc3d-foot .count { font-family: var(--svc-body); font-size: 13px; font-weight: 500; letter-spacing: 0.14em; color: var(--svc-accent); font-variant-numeric: tabular-nums; }
+.svc3d .svc3d-foot .count { font-family: var(--svc-body); font-size: 13px; font-weight: 500; letter-spacing: 0.14em; color: rgba(255, 255, 254, 0.6); font-variant-numeric: tabular-nums; }
 .svc3d .svc3d-foot .name { font-family: var(--svc-display); font-weight: 600; font-size: clamp(18px, 2vw, 24px); letter-spacing: -0.02em; }
 @media (max-width: 700px) { .svc3d .svc3d-foot { padding-bottom: 20px; } }
 
 /* ---------- posters ---------- */
-.svc3d .poster { position: absolute; left: 50%; top: 50%; width: 300px; height: 420px; margin: -210px 0 0 -150px; overflow: hidden; border-radius: 14px; backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: transform, opacity; box-shadow: 0 24px 50px rgba(184, 54, 12, 0.18); font-family: var(--svc-body); transform-origin: 50% 50%; }
+.svc3d .poster { position: absolute; left: 50%; top: 50%; width: 300px; height: 420px; margin: -210px 0 0 -150px; overflow: hidden; border-radius: 14px; backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: transform, opacity; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(250, 70, 20, 0.12); font-family: var(--svc-body); transform-origin: 50% 50%; }
 .svc3d .poster .meta { position: absolute; top: 16px; left: 18px; right: 18px; display: flex; justify-content: space-between; gap: 8px; font-size: 8.5px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; z-index: 2; }
 .svc3d .poster .desc { position: absolute; left: 18px; right: 18px; bottom: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; font-size: 7.5px; line-height: 1.45; letter-spacing: 0.04em; text-transform: uppercase; z-index: 2; }
 .svc3d .poster .title { position: relative; z-index: 2; margin: 0; font-family: var(--svc-display); font-weight: 800; letter-spacing: -0.045em; line-height: 0.88; }
 
 /* 01 white */
-.svc3d .p-ios { background: var(--svc-white); color: var(--svc-accent); box-shadow: 0 24px 50px rgba(184, 54, 12, 0.18), inset 0 0 0 1px var(--svc-line); }
+.svc3d .p-ios { background: var(--svc-white); color: var(--svc-ink); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(250, 70, 20, 0.12); }
 .svc3d .p-ios .title { position: absolute; top: 44px; left: 16px; font-size: 74px; }
 .svc3d .p-ios .scribble { position: absolute; left: 0; right: 0; top: 190px; width: 100%; height: 150px; }
 
@@ -81,7 +83,7 @@
 .svc3d .p-api .title { position: absolute; left: 18px; bottom: 66px; font-size: 52px; }
 
 /* 07 white-to-orange gradient */
-.svc3d .p-cloud { background: linear-gradient(160deg, #fffffe 0%, #e38c54 45%, #fa4614 100%); color: var(--svc-accent); }
+.svc3d .p-cloud { background: linear-gradient(160deg, #fffffe 0%, #e38c54 45%, #fa4614 100%); color: var(--svc-ink); }
 .svc3d .p-cloud .desc { color: var(--svc-white); }
 .svc3d .p-cloud .rings { position: absolute; left: 50%; top: 40%; width: 0; height: 0; }
 .svc3d .p-cloud .rings i { position: absolute; width: 120px; height: 120px; border: 2px solid rgba(255, 255, 254, 0.9); border-radius: 50%; }
@@ -91,7 +93,7 @@
 .svc3d .p-cloud .title { position: absolute; left: 18px; bottom: 66px; font-size: 50px; color: var(--svc-white); }
 
 /* 08 white with checks */
-.svc3d .p-qa { background: var(--svc-white); color: var(--svc-accent); box-shadow: 0 24px 50px rgba(184, 54, 12, 0.18), inset 0 0 0 1px var(--svc-line); }
+.svc3d .p-qa { background: var(--svc-white); color: var(--svc-ink); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(250, 70, 20, 0.12); }
 .svc3d .p-qa .title { position: absolute; top: 44px; left: 16px; font-size: 60px; }
 .svc3d .p-qa .checks { position: absolute; left: 18px; right: 18px; top: 196px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
 .svc3d .p-qa .checks i { aspect-ratio: 1; background: var(--svc-accent); position: relative; border-radius: 4px; }
@@ -106,7 +108,7 @@
 .svc3d .p-ai .title small { display: block; font-size: 26px; letter-spacing: -0.02em; margin-top: 6px; }
 
 /* 10 white with bars */
-.svc3d .p-growth { background: var(--svc-white); color: var(--svc-accent); box-shadow: 0 24px 50px rgba(184, 54, 12, 0.18), inset 0 0 0 1px var(--svc-line); }
+.svc3d .p-growth { background: var(--svc-white); color: var(--svc-ink); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(250, 70, 20, 0.12); }
 .svc3d .p-growth .bars { position: absolute; left: 18px; right: 18px; top: 60px; height: 170px; display: flex; align-items: flex-end; gap: 10px; }
 .svc3d .p-growth .bars i { flex: 1; background: var(--svc-accent); }
 .svc3d .p-growth .bars i:nth-child(1) { height: 18%; opacity: 0.35; }
@@ -128,3 +130,38 @@
 .svc3d .p-care { background: var(--svc-accent); color: var(--svc-white); }
 .svc3d .p-care .title { position: absolute; left: 16px; right: 16px; top: 60px; font-size: 34px; letter-spacing: -0.03em; }
 .svc3d .p-care .title .big { display: block; font-size: 116px; color: transparent; -webkit-text-stroke: 2px var(--svc-white); margin-bottom: 18px; }
+
+/* ---------- sparkling dark backdrop ---------- */
+.svc3d .svc3d-bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: #0a0a0a; }
+.svc3d .svc3d-bg .glow { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.9; }
+.svc3d .svc3d-bg .glow-a { width: 55vw; height: 55vw; left: -15vw; top: -20vw; background: radial-gradient(circle, rgba(250, 70, 20, 0.7), transparent 65%); }
+.svc3d .svc3d-bg .glow-b { width: 45vw; height: 45vw; right: -12vw; top: 25%; background: radial-gradient(circle, rgba(244, 116, 50, 0.55), transparent 65%); }
+.svc3d .svc3d-bg .glow-c { width: 60vw; height: 40vw; left: 20%; bottom: -25vw; background: radial-gradient(circle, rgba(227, 140, 84, 0.5), transparent 65%); }
+.svc3d .svc3d-bg canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* soft vignette so the edges stay deep black */
+.svc3d .svc3d-bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 55%, transparent 45%, rgba(10, 10, 10, 0.6) 100%); }
+
+@keyframes svc-drift-a { 50% { transform: translate3d(8vw, 6vh, 0) scale(1.1); } }
+@keyframes svc-drift-b { 50% { transform: translate3d(-6vw, -8vh, 0) scale(0.92); } }
+@keyframes svc-drift-c { 50% { transform: translate3d(-10vw, -4vh, 0) scale(1.08); } }
+@media (prefers-reduced-motion: no-preference) {
+  .svc3d .svc3d-bg .glow-a { animation: svc-drift-a 18s ease-in-out infinite; }
+  .svc3d .svc3d-bg .glow-b { animation: svc-drift-b 22s ease-in-out infinite; }
+  .svc3d .svc3d-bg .glow-c { animation: svc-drift-c 26s ease-in-out infinite; }
+}
+
+/* ---------- poster hover ----------
+ * The ring sets `transform` inline every frame, so hover uses the
+ * independent `scale` / `translate` properties, which stack on top of it. */
+.svc3d .poster { transition: scale 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s ease, filter 0.45s ease; }
+.svc3d .poster::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit; background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 254, 0.45) 50%, transparent 65%) no-repeat; background-size: 250% 100%; background-position: 150% 0; box-shadow: inset 0 0 0 1px rgba(255, 255, 254, 0); transition: background-position 0.9s ease, box-shadow 0.45s ease; }
+.svc3d .poster .title { transition: translate 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.svc3d .poster .desc { transition: opacity 0.45s ease; }
+.svc3d .poster:hover { scale: 1.05; filter: saturate(1.12) brightness(1.04); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 70px rgba(250, 70, 20, 0.55); }
+.svc3d .poster:hover::after { background-position: -50% 0; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 254, 0.7); }
+.svc3d .poster:hover .title { translate: 0 -6px; }
+@media (prefers-reduced-motion: reduce) {
+  .svc3d .poster, .svc3d .poster::after, .svc3d .poster .title { transition: none; }
+  .svc3d .poster:hover { scale: none; }
+  .svc3d .poster:hover .title { translate: none; }
+}

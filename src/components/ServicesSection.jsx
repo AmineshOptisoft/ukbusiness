@@ -126,6 +126,98 @@ function useServiceRing(sectionRef, stageRef, countRef, nameRef) {
   }, [sectionRef, stageRef, countRef, nameRef])
 }
 
+const SPARK_COLORS = ['255, 255, 254', '255, 214, 186', '250, 70, 20', '244, 116, 50']
+
+/** Twinkling sparkles on a canvas; paused while off screen, static with reduced motion. */
+function Sparkles() {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    let w = 0
+    let h = 0
+    let sparks = []
+    let frame = 0
+    let visible = false
+
+    const build = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      w = canvas.clientWidth
+      h = canvas.clientHeight
+      canvas.width = w * dpr
+      canvas.height = h * dpr
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      const count = Math.round((w * h) / 3200)
+      sparks = Array.from({ length: count }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() < 0.1 ? 1.4 + Math.random() * 1.2 : 0.4 + Math.random() * 0.8,
+        c: SPARK_COLORS[Math.random() < 0.6 ? 0 : 1 + Math.floor(Math.random() * 3)],
+        speed: 0.5 + Math.random() * 2,
+        phase: Math.random() * Math.PI * 2,
+        vy: -(0.03 + Math.random() * 0.12),
+      }))
+    }
+
+    const draw = (t) => {
+      ctx.clearRect(0, 0, w, h)
+      const time = t / 1000
+      for (const p of sparks) {
+        if (!still) {
+          p.y += p.vy
+          if (p.y < -4) p.y = h + 4
+        }
+        const tw = Math.pow(0.5 + 0.5 * Math.sin(time * p.speed + p.phase), 3)
+        const a = 0.15 + tw * 0.85
+        ctx.fillStyle = `rgba(${p.c}, ${a})`
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fill()
+        // the bigger sparks flare into a small cross when they peak
+        if (p.r > 1.3 && tw > 0.6) {
+          const len = p.r * 6 * tw
+          ctx.strokeStyle = `rgba(${p.c}, ${(tw - 0.6) * 1.6})`
+          ctx.lineWidth = 0.8
+          ctx.beginPath()
+          ctx.moveTo(p.x - len, p.y)
+          ctx.lineTo(p.x + len, p.y)
+          ctx.moveTo(p.x, p.y - len)
+          ctx.lineTo(p.x, p.y + len)
+          ctx.stroke()
+        }
+      }
+    }
+
+    const loop = (t) => {
+      draw(t)
+      frame = visible && !still ? requestAnimationFrame(loop) : 0
+    }
+
+    build()
+    draw(0)
+    const ro = new ResizeObserver(() => {
+      build()
+      draw(performance.now())
+    })
+    ro.observe(canvas)
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      if (visible && !frame && !still) frame = requestAnimationFrame(loop)
+    })
+    io.observe(canvas)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      ro.disconnect()
+      io.disconnect()
+    }
+  }, [])
+
+  return <canvas ref={canvasRef} aria-hidden="true" />
+}
+
 export default function ServicesSection({ brandName = 'UK Business', contactHref = '#contact' }) {
   const sectionRef = useRef(null)
   const stageRef = useRef(null)
@@ -136,6 +228,12 @@ export default function ServicesSection({ brandName = 'UK Business', contactHref
   return (
     <section ref={sectionRef} className="svc3d" id="services" aria-label="Our services">
       <div className="svc3d-sticky">
+        <div className="svc3d-bg" aria-hidden="true">
+          <span className="glow glow-a" />
+          <span className="glow glow-b" />
+          <span className="glow glow-c" />
+          <Sparkles />
+        </div>
         <div className="svc3d-wrap svc3d-head">
           <h2>Our Services</h2>
           <a className="svc3d-cta group" href={contactHref}>

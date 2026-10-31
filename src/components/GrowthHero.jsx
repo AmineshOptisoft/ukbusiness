@@ -86,7 +86,7 @@ export default function GrowthHero({
           ))}
           <a
             href={contactHref}
-            className="group flex items-center gap-3 rounded-full bg-white px-8 py-4 text-ember-500 shadow-sm transition hover:shadow-lg"
+            className="group flex items-center gap-3 rounded-full bg-white px-8 py-4 text-neutral-950 shadow-sm transition hover:shadow-lg"
           >
             Contact Us
             <ArrowRight className="h-3 w-8 transition-transform group-hover:translate-x-1" />
@@ -111,7 +111,7 @@ export default function GrowthHero({
       </header>
 
       {menuOpen && (
-        <div id="mobile-menu" className="relative z-10 mx-6 mt-4 rounded-3xl bg-white p-6 text-ember-500 shadow-xl lg:hidden">
+        <div id="mobile-menu" className="relative z-10 mx-6 mt-4 rounded-3xl bg-white p-6 text-neutral-950 shadow-xl lg:hidden">
           <ul className="flex flex-col gap-4 text-lg">
             {NAV_LINKS.map((link) => (
               <li key={link.label}>
@@ -148,7 +148,7 @@ export default function GrowthHero({
 
         <a
           href={ctaHref}
-          className="group mt-6 md:mt-8 inline-flex w-fit self-start items-center gap-3 rounded-full bg-white px-8 py-3.5 text-[16px] font-semibold text-ember-500 shadow-sm transition hover:shadow-lg"
+          className="group mt-6 md:mt-8 inline-flex w-fit self-start items-center gap-3 rounded-full bg-white px-8 py-3.5 text-[16px] font-semibold text-neutral-950 shadow-sm transition hover:shadow-lg"
         >
           {ctaLabel}
           <ArrowRight className="h-3 w-8 transition-transform group-hover:translate-x-1" />
