@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="base.css"><style>
+.pal{position:absolute;left:32px;top:300px;width:420px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.blk{padding:16px;border-radius:14px;font-weight:600;font-size:15px;display:flex;gap:10px;align-items:center}
+.blk.o{background:var(--o5);color:var(--w)}.blk.m{background:var(--o4);color:var(--w)}.blk.s{background:var(--o3);color:var(--k)}.blk.w{background:var(--w);color:var(--k)}
+.blk.ghost{background:transparent;border:1.5px dashed rgba(255,255,254,.3);color:rgba(255,255,254,.4)}
+.phone{position:absolute;left:560px;top:280px;width:300px;height:580px;border-radius:44px;border:2px solid rgba(255,255,254,.35);padding:56px 18px 18px;background:rgba(255,255,254,.03);display:flex;flex-direction:column;gap:10px;box-shadow:0 0 80px rgba(250,70,20,.25)}
+.phone:before{content:"";position:absolute;left:50%;top:16px;width:90px;height:22px;margin-left:-45px;border-radius:12px;background:#000;border:1px solid rgba(255,255,254,.2)}
+.phone .blk{justify-content:space-between}
+.drag{position:absolute;left:470px;top:620px;transform:rotate(-6deg);box-shadow:0 25px 50px rgba(0,0,0,.6),0 0 40px rgba(250,70,20,.6);width:200px}
+.est{position:absolute;right:32px;top:300px;width:400px;padding:28px}
+.big{font-family:var(--d);font-weight:800;font-size:64px;line-height:1}
+.row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,254,.1);font-size:15px;color:rgba(255,255,254,.8)}
+.meter{display:flex;gap:4px;margin:16px 0}.meter i{flex:1;height:26px;border-radius:4px;background:rgba(255,255,254,.1)}.meter i.on{background:var(--o5)}
+</style></head><body><section class="sec"><div class="bg"></div>
+<div class="z head"><div><div class="eyebrow">Concept 02 · Build your app</div><h2>Drag. Drop.<br>Ship it.</h2></div><span class="pill o">Get this exact plan →</span></div>
+<div class="z pal"><div class="blk o">📱 Mobile app</div><div class="blk w">🌐 Web app</div><div class="blk m">🎨 UI / UX</div><div class="blk s">🔌 APIs</div><div class="blk w">🤖 AI chat</div><div class="blk ghost">☁️ Cloud (in phone)</div><div class="blk m">💳 Payments</div><div class="blk s">📊 Admin panel</div></div>
+<div class="z phone"><div class="blk o">📱 Mobile app <span>✓</span></div><div class="blk m">🎨 UI / UX <span>✓</span></div><div class="blk s">☁️ Cloud <span>✓</span></div><div class="blk ghost" style="flex:1;justify-content:center">drop here</div></div>
+<div class="z blk w drag">🤖 AI chat</div>
+<div class="z card est"><div class="eyebrow">Live estimate</div><div class="big mono">8–10 wks</div><div style="color:rgba(255,255,254,.6);margin-top:6px">team of 4 · launch-ready</div>
+<div class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+<div class="row"><span>Complexity</span><span>Medium</span></div><div class="row"><span>Platforms</span><span>iOS + Android</span></div><div class="row"><span>Stack</span><span>Flutter · Node · AWS</span></div>
+<div style="margin-top:22px;display:flex;gap:10px"><span class="pill w">Email me this plan</span><span class="pill g">Reset</span></div></div>
+<div class="tag">Drag service blocks into the phone · timeline & stack update live · ends with a ready-made project brief</div>
+</section></body></html>
