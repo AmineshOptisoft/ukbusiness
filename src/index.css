@@ -24,3 +24,30 @@ body {
   .animate-arrow { animation: arrow-drop 2.4s ease-in-out infinite; }
 }
 
+
+/* ---------- services builder ---------- */
+.builder-grid {
+  background-image: radial-gradient(rgba(255, 255, 254, 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 30%, transparent 100%);
+}
+.builder-scroll { scrollbar-width: none; }
+.builder-scroll::-webkit-scrollbar { display: none; }
+
+@keyframes builder-pop { from { opacity: 0; transform: translateY(8px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes builder-drop { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: none; } }
+@keyframes builder-hint { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -6px); } }
+@keyframes builder-ready { 0%, 100% { box-shadow: 0 0 0 0 rgba(250, 70, 20, 0.55); } 50% { box-shadow: 0 0 0 10px rgba(250, 70, 20, 0); } }
+@keyframes builder-launch { from { clip-path: circle(0% at 50% 100%); } to { clip-path: circle(150% at 50% 100%); } }
+@keyframes builder-rocket { 0% { transform: translateY(60px) scale(0.6); opacity: 0; } 60% { transform: translateY(-8px) scale(1.05); opacity: 1; } 100% { transform: none; } }
+@keyframes builder-confetti { to { transform: translateY(640px) rotate(540deg); } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .builder-pop { animation: builder-pop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .builder-drop { animation: builder-drop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .builder-hint { animation: builder-hint 2s ease-in-out infinite; }
+  .builder-ready { animation: builder-ready 1.8s ease-out infinite; }
+  .builder-launch { animation: builder-launch 0.7s cubic-bezier(0.6, 0, 0.2, 1) both; }
+  .builder-rocket { animation: builder-rocket 0.9s 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .builder-confetti { animation: builder-confetti 2.4s linear infinite; }
+}

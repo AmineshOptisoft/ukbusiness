@@ -1,11 +1,11 @@
 import GrowthHero from './components/GrowthHero.jsx'
-import ServicesSection from './components/ServicesSection.jsx'
+import ServicesBuilder from './components/builder/ServicesBuilder.jsx'
 
 export default function App() {
   return (
     <>
       <GrowthHero />
-      <ServicesSection />
+      <ServicesBuilder />
     </>
   )
 }
