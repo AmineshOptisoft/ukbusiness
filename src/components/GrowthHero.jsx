@@ -38,101 +38,23 @@ function Logo({ name, tagline }) {
   )
 }
 
-/**
- * Builds a bundle of parallel ribbons that pinch together where they cross.
- * `anchors` are [x, y, spread] points; `dir` is the offset axis ([1,0] for
- * vertical ribbons, [0,1] for horizontal ones). Curves are smooth
- * Catmull-Rom splines converted to cubic Béziers.
- */
-function ribbonBundle(anchors, dir, count = 6, gap = 13) {
-  const paths = []
-  for (let i = 0; i < count; i++) {
-    const k = i - (count - 1) / 2
-    const pts = anchors.map(([x, y, spread]) => [x + dir[0] * k * gap * spread, y + dir[1] * k * gap * spread])
-    let d = `M${pts[0][0]} ${pts[0][1]}`
-    for (let j = 0; j < pts.length - 1; j++) {
-      const p0 = pts[j - 1] || pts[j]
-      const p1 = pts[j]
-      const p2 = pts[j + 1]
-      const p3 = pts[j + 2] || p2
-      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6]
-      const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6]
-      d += ` C${c1[0]} ${c1[1]} ${c2[0]} ${c2[1]} ${p2[0]} ${p2[1]}`
-    }
-    paths.push(d)
-  }
-  return paths
-}
-
-// All bundles pass through the crossing point around (960, 560).
-const BUNDLES = [
-  // Left edge → crossing → upper right
-  ribbonBundle([[-60, 470, 1.6], [420, 470, 1.3], [760, 560, 0.8], [960, 560, 0.45], [1180, 470, 0.8], [1500, 330, 1.4]], [0, 1]),
-  // Top → loops through crossing → bottom
-  ribbonBundle([[700, -60, 1.6], [800, 220, 1.3], [930, 440, 0.8], [960, 560, 0.45], [910, 760, 0.9], [960, 980, 1.5]], [1, 0]),
-  // Lower right → crossing
-  ribbonBundle([[1500, 640, 1.5], [1220, 640, 1], [960, 560, 0.45]], [0, 1], 5),
-  // Crossing → lower left
-  ribbonBundle([[960, 560, 0.45], [700, 720, 1], [380, 960, 1.6]], [1, 0], 5),
-]
-
-function RibbonBackdrop() {
+function VideoBackdrop({ src, poster }) {
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-      <svg
-        className="animate-ribbon absolute inset-0 h-full w-full"
-        viewBox="0 0 1440 900"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <defs>
-          <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#e38c54" />
-            <stop offset="0.55" stopColor="#f47432" />
-            <stop offset="1" stopColor="#e38c54" />
-          </linearGradient>
-          <linearGradient id="fold-a" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#fa4614" stopOpacity="0.95" />
-            <stop offset="1" stopColor="#f47432" stopOpacity="0.55" />
-          </linearGradient>
-          <linearGradient id="fold-b" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#f47432" stopOpacity="0.2" />
-            <stop offset="1" stopColor="#fa4614" stopOpacity="0.9" />
-          </linearGradient>
-          <linearGradient id="line" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#ffd2b0" />
-            <stop offset="1" stopColor="#ffb98a" />
-          </linearGradient>
-          <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="14" />
-          </filter>
-          <filter id="shade" x="-10%" y="-10%" width="120%" height="120%">
-            <feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#b42a00" floodOpacity="0.45" />
-          </filter>
-        </defs>
-
-        <rect width="1440" height="900" fill="url(#bg)" />
-
-        {/* Broad soft folds that give the 3D paper depth */}
-        <g filter="url(#soft)">
-          <path d="M-60 560 C 420 470 900 820 1500 560 L 1500 900 L -60 900 Z" fill="url(#fold-a)" />
-          <path d="M700 -60 C 760 380 1040 520 960 780 C 900 960 980 1000 1020 980 L 1240 980 C 1120 820 1180 600 1500 420 L 1500 -60 Z" fill="url(#fold-b)" />
-          <path d="M1000 980 C 1100 760 1300 640 1500 600 L 1500 980 Z" fill="#fa4614" opacity="0.55" />
-          <path d="M-60 900 C 200 760 520 700 900 760 L 900 960 L -60 960 Z" fill="#fa4614" opacity="0.4" />
-        </g>
-
-        {/* Stacked ribbon edges */}
-        <g fill="none" strokeLinecap="round" filter="url(#shade)">
-          {BUNDLES.flat().map((d, i) => (
-            <g key={i}>
-              <path d={d} stroke="#fa4614" strokeWidth="11" />
-              <path d={d} stroke="url(#line)" strokeWidth="1.6" opacity="0.9" />
-            </g>
-          ))}
-        </g>
-
-        {/* Light vignette on the left keeps the copy readable */}
-        <rect width="1440" height="900" fill="url(#bg)" opacity="0.18" />
-      </svg>
+    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
+      <video
+        className="absolute inset-0 h-full w-full object-cover"
+        src={src}
+        poster={poster}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+      />
+      {/* Orange tint: multiply turns the white/grey video into brand-orange stripes */}
+      <div className="absolute inset-0 bg-gradient-to-br from-ember-300 via-ember-400 to-ember-500 mix-blend-multiply" />
+      {/* Extra wash on the left keeps the white copy readable */}
+      <div className="absolute inset-0 bg-gradient-to-r from-ember-500/40 via-ember-400/10 to-transparent" />
     </div>
   )
 }
@@ -145,12 +67,14 @@ export default function GrowthHero({
   ctaLabel = 'Get Started',
   ctaHref = '#get-started',
   contactHref = '#contact',
+  videoSrc = '/videos/hero.mp4',
+  videoPoster = '/videos/hero-poster.jpg',
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <section className="relative isolate min-h-screen overflow-hidden bg-ember-300 font-sans text-white">
-      <RibbonBackdrop />
+      <VideoBackdrop src={videoSrc} poster={videoPoster} />
 
       {/* Navigation */}
       <header className="relative z-10 mx-auto flex max-w-[1440px] items-center justify-between px-6 pt-6 md:px-8">

@@ -15,17 +15,11 @@ body {
   background: var(--color-ember-300);
 }
 
-@keyframes ribbon-drift {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  50% { transform: translate3d(-1.5%, 1%, 0) rotate(-1.5deg); }
-}
-
 @keyframes arrow-drop {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(8px); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .animate-ribbon { animation: ribbon-drift 18s ease-in-out infinite; transform-origin: 60% 55%; }
   .animate-arrow { animation: arrow-drop 2.4s ease-in-out infinite; }
 }
