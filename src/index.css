@@ -7,6 +7,9 @@
   --color-ember-300: #e38c54;
   --color-ember-400: #f47432;
   --color-ember-500: #fa4614;
+  --color-ember-700: #b8360c;
+  --color-ember-900: #4a1a07;
+  --color-ember-tint: #fff4ee;
 }
 
 html,
@@ -22,4 +25,46 @@ body {
 
 @media (prefers-reduced-motion: no-preference) {
   .animate-arrow { animation: arrow-drop 2.4s ease-in-out infinite; }
+}
+
+/* Rotating orange highlight that traces a card's border on hover */
+@property --sweep-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes border-sweep {
+  to { --sweep-angle: 360deg; }
+}
+
+.sweep-border {
+  position: relative;
+}
+
+.sweep-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--sweep-angle), transparent 0deg, var(--color-ember-500) 70deg, transparent 140deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.sweep-border:hover::before,
+.sweep-border:focus-visible::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sweep-border:hover::before,
+  .sweep-border:focus-visible::before {
+    animation: border-sweep 2.4s linear infinite;
+  }
 }
