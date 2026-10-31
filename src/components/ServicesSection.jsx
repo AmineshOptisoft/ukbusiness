@@ -1,150 +1,246 @@
-import { useState } from 'react'
-import {
-  FaBars,
-  FaBolt,
-  FaCartShopping,
-  FaGlobe,
-  FaLocationArrow,
-  FaPaperPlane,
-  FaPenToSquare,
-  FaPuzzlePiece,
-  FaRocket,
-  FaScrewdriverWrench,
-} from 'react-icons/fa6'
-import { SiFigma, SiFramer, SiHostinger, SiShopify, SiSquarespace, SiWebflow, SiWix, SiWordpress } from 'react-icons/si'
-import DotField from './DotField.jsx'
+import { useEffect, useRef } from 'react'
 import { ArrowRight } from './icons.jsx'
+import './ServicesSection.css'
 
-const SERVICES = [
-  { icon: FaGlobe, title: ['Crafted', 'Websites'], href: '#crafted-websites' },
-  { icon: FaPenToSquare, title: ['Website', 'Redesign'], href: '#website-redesign' },
-  { icon: FaCartShopping, title: ['eCommerce', 'Website Design'], href: '#ecommerce' },
-  { icon: FaBars, title: ['CMS &', 'Dynamic Websites'], href: '#cms' },
-  { icon: FaPaperPlane, title: ['Landing Pages', '& Microsites'], href: '#landing-pages' },
-  { icon: FaPuzzlePiece, title: ['Consistent', 'Identity'], href: '#identity' },
-  { icon: FaBolt, title: ['Motion &', 'Interaction Design'], href: '#motion' },
-  { icon: FaLocationArrow, title: ['UX Centric', 'Strategy'], href: '#ux-strategy' },
-  { icon: FaRocket, title: ['Performance', 'Optimization'], href: '#performance' },
-  { icon: FaScrewdriverWrench, title: ['Maintenance &', 'Ongoing Support'], href: '#maintenance' },
+const NAMES = [
+  'iOS apps',
+  'Android apps',
+  'Flutter',
+  'React Native',
+  'UI / UX design',
+  'Backend & APIs',
+  'Cloud & DevOps',
+  'QA & testing',
+  'AI features',
+  'App store growth',
+  'Web apps',
+  'Support & maintenance',
 ]
 
-const PLATFORMS = [
-  { icon: SiWebflow, name: 'Webflow' },
-  { icon: SiWordpress, name: 'WordPress' },
-  { icon: SiWix, name: 'Wix' },
-  { icon: SiFramer, name: 'Framer' },
-  { icon: SiHostinger, name: 'Hostinger' },
-  { icon: SiSquarespace, name: 'Squarespace' },
-  { icon: SiShopify, name: 'Shopify' },
-  { icon: SiFigma, name: 'Figma' },
-]
+// Ring constants (from services-kit)
+const W = 300
+const H = 420
+const STEP = (19.5 * Math.PI) / 180 // angle between posters
+const CUTOFF = 86 // degrees: beyond this a poster is parked out of sight
+const FADE_START = 52
+const FADE_RANGE = 34
+const EASE = 0.14 // per-frame easing toward the scroll position
+const TURN_PER_POSTER = 0.42 // × viewport height of scroll per poster
+const HOLD = 0.3 // × viewport height the last poster stays put
 
-function ServiceCard({ icon: Icon, title, href }) {
-  const [active, setActive] = useState(false)
-  const on = () => setActive(true)
-  const off = () => setActive(false)
+const clamp = (v, a, b) => (v < a ? a : v > b ? b : v)
 
-  return (
-    <a
-      href={href}
-      onMouseEnter={on}
-      onMouseLeave={off}
-      onFocus={on}
-      onBlur={off}
-      className="sweep-border group relative flex aspect-square flex-col items-center justify-center gap-4 overflow-hidden rounded-2xl border border-ember-500/10 bg-ember-tint text-center outline-none transition-colors duration-300 hover:bg-white focus-visible:bg-white"
-    >
-      <span className={`absolute inset-0 transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`}>
-        <DotField mode="grid" active={active} />
-      </span>
-      <Icon className="relative h-7 w-7 text-ember-500 transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-110" aria-hidden="true" />
-      <span className="relative font-display text-[15px] leading-snug text-ember-900/55 transition-colors duration-300 group-hover:text-ember-700 group-focus-visible:text-ember-700 md:text-base">
-        {title[0]}
-        <br />
-        {title[1]}
-      </span>
-    </a>
-  )
+function useServiceRing(sectionRef, stageRef, countRef, nameRef) {
+  useEffect(() => {
+    const sec = sectionRef.current
+    const stage = stageRef.current
+    if (!sec || !stage) return undefined
+
+    const cards = Array.from(stage.querySelectorAll('.poster'))
+    const N = cards.length
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    let k = 1
+    let R = 1000
+    let A = 1
+    let D = 0
+    let baseY = 0
+    let cur = 0
+    let lastIdx = -1
+    let frame = 0
+
+    const layout = () => {
+      const vh = window.innerHeight
+      const vw = document.documentElement.clientWidth
+      const sh = stage.clientHeight
+      const topGap = Math.max(36, sh * 0.07)
+      // posters fill the height between the heading and the counter
+      k = Math.min(1.5, (sh - topGap - 28) / H, (vw * (vw < 700 ? 0.74 : 0.62)) / W)
+      baseY = -sh / 2 + (H * k) / 2 + topGap
+      R = 1000 * k
+      stage.style.perspective = `${1450 * k}px`
+      A = (N - 1) * TURN_PER_POSTER * vh
+      D = still ? 0 : A + HOLD * vh
+      sec.style.height = `${vh + D}px`
+    }
+
+    const render = (s) => {
+      const rot = still ? 0 : clamp(s / A, 0, 1) * (N - 1) * STEP
+      for (let i = 0; i < N; i++) {
+        const th = i * STEP - rot
+        const ad = (Math.abs(th) * 180) / Math.PI
+        let x
+        let z
+        let a
+        let op
+        if (ad <= CUTOFF) {
+          x = R * Math.sin(th)
+          z = R - R * Math.cos(th)
+          a = -th
+          op = ad <= FADE_START ? 1 : 1 - (ad - FADE_START) / FADE_RANGE
+        } else {
+          const sg = th > 0 ? 1 : -1
+          x = sg * R * 1.3
+          z = -R * 0.6
+          a = -sg
+          op = 0
+        }
+        const c = cards[i]
+        c.style.transform = `translate3d(${x.toFixed(1)}px,${baseY.toFixed(1)}px,${z.toFixed(1)}px) rotateY(${a.toFixed(4)}rad) scale(${k.toFixed(4)})`
+        c.style.opacity = op.toFixed(3)
+        c.style.visibility = op < 0.01 ? 'hidden' : 'visible'
+        c.setAttribute('aria-hidden', op < 0.5 ? 'true' : 'false')
+      }
+      const idx = clamp(Math.round(rot / STEP), 0, N - 1)
+      if (idx !== lastIdx) {
+        lastIdx = idx
+        if (countRef.current) countRef.current.textContent = `${idx < 9 ? '0' : ''}${idx + 1} / ${N}`
+        if (nameRef.current) nameRef.current.textContent = NAMES[idx] || ''
+      }
+    }
+
+    const loop = () => {
+      const r = sec.getBoundingClientRect()
+      if (r.bottom > -50 && r.top < window.innerHeight + 50) {
+        const s = clamp(-r.top, 0, D)
+        cur += (s - cur) * EASE
+        if (Math.abs(s - cur) < 0.5) cur = s
+        render(cur)
+      }
+      frame = requestAnimationFrame(loop)
+    }
+
+    const onResize = () => {
+      layout()
+      render(cur)
+    }
+
+    layout()
+    render(0)
+    window.addEventListener('resize', onResize)
+    frame = requestAnimationFrame(loop)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('resize', onResize)
+    }
+  }, [sectionRef, stageRef, countRef, nameRef])
 }
 
-export default function ServicesSection({
-  heading = ['Elevate your', 'digital footprint.'],
-  allServicesHref = '#all-services',
-  startProjectHref = '#contact',
-  workHref = '#case-studies',
-}) {
+export default function ServicesSection({ brandName = 'UK Business', contactHref = '#contact' }) {
+  const sectionRef = useRef(null)
+  const stageRef = useRef(null)
+  const countRef = useRef(null)
+  const nameRef = useRef(null)
+  useServiceRing(sectionRef, stageRef, countRef, nameRef)
+
   return (
-    <section id="services" className="bg-ember-50 font-sans text-ember-900">
-      <div className="mx-auto max-w-[1440px] px-6 py-20 md:px-8 md:py-28">
-        {/* Heading row */}
-        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-          <h2 className="font-display text-[clamp(2.25rem,4.6vw,4.25rem)] leading-[1.05] font-normal tracking-[-0.02em] text-ember-500">
-            {heading[0]}
-            <br />
-            {heading[1]}
-          </h2>
-          <div className="flex flex-wrap gap-3">
-            <a
-              href={allServicesHref}
-              className="group inline-flex items-center gap-3 rounded-full bg-ember-500 px-6 py-3 text-[15px] font-semibold text-white shadow-sm transition hover:bg-ember-700"
-            >
-              View all services
-              <ArrowRight className="h-3 w-7 transition-transform group-hover:translate-x-1" />
-            </a>
-            <a
-              href={startProjectHref}
-              className="inline-flex items-center rounded-full border border-ember-500/25 px-6 py-3 text-[15px] font-semibold text-ember-500 transition hover:border-ember-500 hover:bg-ember-tint"
-            >
-              Start a project
-            </a>
-          </div>
+    <section ref={sectionRef} className="svc3d" id="services" aria-label="Our services">
+      <div className="svc3d-sticky">
+        <div className="svc3d-wrap svc3d-head">
+          <h2>Our Services</h2>
+          <a className="svc3d-cta group" href={contactHref}>
+            Start a project
+            <ArrowRight />
+          </a>
         </div>
 
-        {/* Services grid */}
-        <div className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 md:gap-4">
-          {SERVICES.map((service) => (
-            <ServiceCard key={service.href} {...service} />
-          ))}
-        </div>
+        <div className="svc3d-stage" ref={stageRef}>
+          <article className="poster p-ios">
+            <div className="meta"><span>{brandName}</span><span>01 · Native</span></div>
+            <h3 className="title">iOS<br />Apps</h3>
+            <svg className="scribble" viewBox="0 0 300 200" aria-hidden="true">
+              <path d="M20 150 C 60 40, 120 20, 140 90 S 210 190, 250 80 S 180 10, 120 120 S 60 190, 30 110 C 10 60, 90 40, 160 60 S 290 120, 270 170" fill="none" stroke="#E38C54" strokeWidth="1.4" />
+            </svg>
+            <div className="desc"><span>SwiftUI apps built for speed, smooth animation and every Apple device.</span><span>Widgets, Apple Pay, HealthKit and App Store submission.</span></div>
+          </article>
 
-        {/* Platforms */}
-        <div className="mt-4 grid gap-4 lg:grid-cols-2">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-ember-400 via-ember-500 to-ember-700 p-8 text-white md:p-12">
-            <div className="pointer-events-none absolute -right-16 top-1/2 h-72 w-[28rem] -translate-y-1/2 -rotate-12 rounded-full bg-white/25 blur-3xl" aria-hidden="true" />
-            <DotField mode="stars" color="255, 255, 254" />
-            <div className="relative">
-              <h3 className="font-display text-[clamp(1.75rem,2.6vw,2.5rem)] leading-[1.1] font-normal tracking-[-0.01em]">
-                Platform flexibility.
-                <br />
-                Design consistency.
-              </h3>
-              <p className="mt-5 max-w-[46ch] text-[16px] leading-relaxed text-white/80">
-                No matter the platform, our design language stays <span className="text-white">consistent, refined, responsive,</span> and
-                built to perform.
-              </p>
-              <a
-                href={workHref}
-                className="group mt-8 inline-flex items-center gap-3 rounded-full bg-white px-6 py-3 text-[15px] font-semibold text-ember-500 shadow-sm transition hover:shadow-lg"
-              >
-                See our work
-                <ArrowRight className="h-3 w-7 transition-transform group-hover:translate-x-1" />
-              </a>
+          <article className="poster p-android">
+            <div className="meta"><span>{brandName}</span><span>02 · Native</span></div>
+            <h3 className="title">Andr<br />oid.</h3>
+            <div className="dots" aria-hidden="true" />
+            <div className="desc"><span>Kotlin and Jetpack Compose apps for every Android screen size.</span><span>Material design, Play Store release and device testing.</span></div>
+          </article>
+
+          <article className="poster p-flutter">
+            <div className="meta"><span>{brandName}</span><span>03 · Cross-platform</span></div>
+            <div className="halo" aria-hidden="true" />
+            <h3 className="title">Flutter</h3>
+            <div className="desc"><span>One codebase, two stores, native feel.</span><span>Faster launch and lower upkeep.</span></div>
+          </article>
+
+          <article className="poster p-rn">
+            <div className="meta"><span>{'{ React Native }'}</span><span>04</span></div>
+            <div className="hex" aria-hidden="true" />
+            <h3 className="title">React<br />Native</h3>
+            <div className="desc"><span>JavaScript teams, shared logic with your web app.</span><span>Over-the-air updates without a store release.</span></div>
+          </article>
+
+          <article className="poster p-ux">
+            <div className="meta"><span>{brandName}</span><span>05 · Design</span></div>
+            <h3 className="title"><span>UI</span><span>UX</span></h3>
+            <div className="desc"><span>Research, flows, prototypes and design systems.</span><span>Screens people understand on the first tap.</span></div>
+          </article>
+
+          <article className="poster p-api">
+            <div className="meta"><span>{brandName}</span><span>06 · Backend</span></div>
+            <pre className="code" aria-hidden="true">{`GET  /v1/events      200
+POST /v1/plans       201
+GET  /v1/users/me    200
+WS   /live/updates   open
+POST /v1/payments    201
+GET  /v1/feed?page=2 200`}</pre>
+            <h3 className="title">Backend<br />&amp; APIs</h3>
+            <div className="desc"><span>REST, GraphQL and real-time sync.</span><span>Auth, payments and admin panels.</span></div>
+          </article>
+
+          <article className="poster p-cloud">
+            <div className="meta"><span>{brandName}</span><span>07 · Infrastructure</span></div>
+            <div className="rings" aria-hidden="true"><i /><i /><i /></div>
+            <h3 className="title">Cloud &amp;<br />DevOps</h3>
+            <div className="desc"><span>AWS, Google Cloud and Firebase set up to scale.</span><span>CI/CD pipelines and uptime monitoring.</span></div>
+          </article>
+
+          <article className="poster p-qa">
+            <div className="meta"><span>{brandName}</span><span>08 · Quality</span></div>
+            <h3 className="title">QA &amp;<br />Testing</h3>
+            <div className="checks" aria-hidden="true">
+              {Array.from({ length: 11 }, (_, i) => <i key={i} />)}
+              <i className="x" />
             </div>
-          </div>
+            <div className="desc"><span>Automated and manual testing on real devices.</span><span>Crash-free releases, every sprint.</span></div>
+          </article>
 
-          <ul className="grid grid-cols-4 overflow-hidden rounded-2xl border border-ember-500/15 bg-ember-tint">
-            {PLATFORMS.map(({ icon: Icon, name }, i) => (
-              <li
-                key={name}
-                className={`group flex aspect-square items-center justify-center border-ember-500/15 transition-colors duration-300 hover:bg-white sm:aspect-auto sm:min-h-36 ${i % 4 !== 3 ? 'border-r' : ''} ${i < 4 ? 'border-b' : ''}`}
-              >
-                <Icon
-                  className="h-8 w-8 text-ember-900/40 transition duration-300 group-hover:scale-110 group-hover:text-ember-500 md:h-11 md:w-11"
-                  role="img"
-                  aria-label={name}
-                />
-              </li>
-            ))}
-          </ul>
+          <article className="poster p-ai">
+            <div className="meta"><span>{brandName}</span><span>09 · Intelligence</span></div>
+            <div className="arc" aria-hidden="true" />
+            <h3 className="title">AI<small>Features</small></h3>
+            <div className="desc"><span>Chat assistants, smart search and recommendations.</span><span>On-device and cloud models.</span></div>
+          </article>
+
+          <article className="poster p-growth">
+            <div className="meta"><span>{brandName}</span><span>10 · Growth</span></div>
+            <div className="bars" aria-hidden="true"><i /><i /><i /><i /><i /><i /></div>
+            <h3 className="title">App Store<br />Growth</h3>
+            <div className="desc"><span>App store optimisation and launch plans.</span><span>Analytics, A/B tests and retention.</span></div>
+          </article>
+
+          <article className="poster p-web">
+            <div className="meta"><span>{brandName}</span><span>11 · Web</span></div>
+            <h3 className="title">WEB</h3>
+            <div className="browser" aria-hidden="true"><b /><b /><b /></div>
+            <div className="desc"><span>Web apps and dashboards that pair with your mobile app.</span><span>React, Next.js and admin tools.</span></div>
+          </article>
+
+          <article className="poster p-care">
+            <div className="meta"><span>{brandName}</span><span>12 · Care</span></div>
+            <h3 className="title"><span className="big">24/7</span>Support &amp;<br />maintenance</h3>
+            <div className="desc"><span>OS updates, bug fixes and security patches.</span><span>Monthly feature work after launch.</span></div>
+          </article>
+        </div>
+
+        <div className="svc3d-wrap svc3d-foot" aria-live="polite">
+          <span className="count" ref={countRef}>01 / 12</span>
+          <span className="name" ref={nameRef}>iOS apps</span>
         </div>
       </div>
     </section>
